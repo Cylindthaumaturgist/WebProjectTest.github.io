@@ -1,0 +1,124 @@
+//admin.js
+//banning
+
+document.addEventListener('DOMContentLoaded', function() {
+    populateUserList();
+    populateBannedUserList(); // Call function to populate banned user list
+    document.getElementById('deleteForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        let username = document.getElementById('deleteUsername').value.trim();
+        let reason = document.getElementById('deleteReason').value.trim();
+        banUser(username, reason); // Change deleteUser to banUser
+    });
+});
+
+function populateUserList() {
+    let users = JSON.parse(localStorage.getItem('users')) || [];
+    let userList = document.getElementById('userList');
+    userList.innerHTML = ''; // Clear previous data
+    users.forEach(user => {
+        if (!user.banned) { // Check if the user is not banned
+            let row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${user.username}&nbsp;&nbsp;&nbsp;</td>
+                <td>${user.password}</td>
+                <td>${user.coins}&nbsp;&nbsp;&nbsp;</td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;<button onclick="banUser('${user.username}', 'Misclick ban, sorry')">Ban</button></td>
+            `;
+            userList.appendChild(row);
+        }
+    });
+}
+
+function banUser(username, reason) {
+    let users = JSON.parse(localStorage.getItem('users')) || [];
+    let index = users.findIndex(user => user.username === username);
+    if (index !== -1) {
+        users[index].banned = true; // Mark the user as banned
+        users[index].reason = reason; // Set the ban reason for the user
+        localStorage.setItem(username, reason); // Store ban reason associated with the username
+        localStorage.setItem('users', JSON.stringify(users)); // Update users array in localStorage
+        alert(`User banned: ${username}\nReason: ${reason}`);
+        populateUserList(); // Update the user list in the dashboard
+        populateBannedUserList(); // Update the banned user list in the dashboard
+    } else {
+        alert('User not found');
+    }
+}
+
+function populateBannedUserList() {
+    let bannedUserTable = document.getElementById('bannedUsers');
+    bannedUserTable.innerHTML = ''; // Clear previous data
+    let users = JSON.parse(localStorage.getItem('users')) || [];
+    users.forEach(user => {
+        if (user.banned) {
+            let reason = localStorage.getItem(user.username); // Retrieve ban reason for the user
+            let row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${user.username}</td>
+                <td>${reason}</td>
+            `;
+            bannedUserTable.appendChild(row);
+        }
+    });
+}
+
+
+//soon
+
+
+
+
+//admin.html
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin Dashboard</title>
+</head>
+<body>
+  <h1>Admin Dashboard</h1>
+  
+  <!-- Table for banned users -->
+  <!-- Table for active users -->
+  <h2>Active Users</h2>
+  <table id="userList">
+    <thead>
+      <tr>
+        <h3>Username&nbsp;&nbsp;Password&nbsp;&nbsp;Coins&nbsp;&nbsp;Actions</h3>
+        <th></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Active users will be dynamically added here -->
+    </tbody>
+  </table>
+  
+    <h2>Banned Users</h2>
+  <table id="bannedUserList">
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>Reason</th>
+      </tr>
+    </thead>
+    <tbody id="bannedUsers">
+      <!-- Banned users will be dynamically added here -->
+    </tbody>
+  </table>
+  
+
+  <!-- Delete form for banning users -->
+  <form id="deleteForm">
+    <label for="deleteUsername">Username:</label>
+    <input type="text" id="deleteUsername" name="deleteUsername"><br>
+    <label for="deleteReason">Reason:</label>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="deleteReason" name="deleteReason">
+    <button type="submit">&nbsp;&nbsp;Ban&nbsp;&nbsp;</button>
+  </form>
+
+  <script src="/main-area/Admin/admin.js"></script>
+</body>
+</html>

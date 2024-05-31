@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Welcome Page</title>
+  <script defer src="logout.js"></script>
+  <script>
+    window.onload = function() {
+      let username = localStorage.getItem('loggedInUser');
+      if (username === "Admin") {
+        window.location.href = "/main-area/Admin/Admin.html";
+      } else if (isUserBanned(username)) {
+        window.location.href = "/main-area/banned/banned.html";
+      } else {
+        document.getElementById('h2-1').innerHTML = username ? `Welcome ${username}!` : 'Welcome Guest!';
+        displayUserCoins(username);
+      }
+    }
+
+    function isUserBanned(username) {
+      let users = JSON.parse(localStorage.getItem('users')) || [];
+      let user = users.find(user => user.username === username);
+      return user && user.banned;
+    }
+
+    function displayUserCoins(username) {
+      let users = JSON.parse(localStorage.getItem('users')) || [];
+      let user = users.find(user => user.username === username);
+      if (user) {
+        document.getElementById('coins').innerHTML = `Coins: ${user.coins || 0}`;
+      } else {
+        document.getElementById('coins').innerHTML = 'Coins: 0';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const coina = document.getElementById('coina');
+      coina.onclick = function() {
+        let username = localStorage.getItem('loggedInUser');
+        if (username) {
+          let users = JSON.parse(localStorage.getItem('users')) || [];
+          let userIndex = users.findIndex(user => user.username === username);
+
+          if (userIndex !== -1) {
+            let user = users[userIndex];
+            user.coins = (user.coins || 0) + 1; // Increment coins
+            users[userIndex] = user; // Update the user in the array
+            localStorage.setItem('users', JSON.stringify(users)); // Save the updated users array
+            document.getElementById('coins').innerHTML = `Coins: ${user.coins}`; // Update displayed coins
+          }
+        }
+      };
+    });
+  </script>
+</head>
+<body>
+  <div class="Screen">
+    <h2 id="h2-1"></h2>
+    <p id="coins"></p>
+    <button id="coina">Add Coin</button>
+    <button id="logout">Logout</button>
+  </div>
+</body>
+</html>

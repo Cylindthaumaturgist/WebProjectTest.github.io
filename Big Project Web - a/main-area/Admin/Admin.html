@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin Dashboard</title>
+</head>
+<body>
+  <h1>Admin Dashboard</h1>
+  
+  <h2>Active Users</h2>
+  <table id="userList">
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>Password</th>
+        <th>Coins</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Active users will be dynamically added here -->
+    </tbody>
+  </table>
+  
+  <h2>Banned Users</h2>
+  <table id="bannedUserList">
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>Reason</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="bannedUsers">
+      <!-- Banned users will be dynamically added here -->
+    </tbody>
+  </table>
+
+  <form id="deleteForm">
+    <label for="deleteUsername">Username:</label>
+    <input type="text" id="deleteUsername" name="deleteUsername"><br>
+    <label for="deleteReason">Reason:</label>
+    <input type="text" id="deleteReason" name="deleteReason"><br>
+    <button type="submit">Ban</button>
+  </form>
+
+  <script src="/main-area/Admin/admin.js"></script>
+</body>
+</html>
